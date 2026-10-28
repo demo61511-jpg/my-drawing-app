@@ -1,10 +1,9 @@
-name: Build Debug APK
+name: Build and Publish Debug APK
 
 on:
   push:
     branches:
       - main
-      - master
   workflow_dispatch:
 
 permissions:
@@ -76,7 +75,7 @@ jobs:
           APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
           if [ ! -f "$APK_PATH" ]; then
             echo "Error: Expected APK not found at $APK_PATH"
-            echo "Searching inside app/build/outputs/apk:"
+            echo "Searching only inside app/build/outputs/apk:"
             find app/build/outputs/apk -name "*.apk" 2>/dev/null || true
             exit 1
           fi
@@ -97,13 +96,18 @@ jobs:
         id: prepare_asset
         run: |
           TMP_DIR=$(mktemp -d)
-          cp app/build/outputs/apk/debug/app-debug.apk "$TMP_DIR/app-debug.apk"
-          if [ ! -f "$TMP_DIR/app-debug.apk" ] || [ ! -s "$TMP_DIR/app-debug.apk" ]; then
-            echo "Error: Failed to prepare APK release asset."
+          RAW_REPO="${GITHUB_REPOSITORY##*/}"
+          SANITIZED_REPO=$(echo "$RAW_REPO" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9._-]/-/g')
+          ASSET_NAME="${SANITIZED_REPO}-debug-build-${GITHUB_RUN_NUMBER}.apk"
+          TARGET_PATH="$TMP_DIR/$ASSET_NAME"
+          cp app/build/outputs/apk/debug/app-debug.apk "$TARGET_PATH"
+          if [ ! -f "$TARGET_PATH" ] || [ ! -s "$TARGET_PATH" ]; then
+            echo "Error: Failed to prepare APK release asset at $TARGET_PATH"
             exit 1
           fi
-          echo "asset_path=$TMP_DIR/app-debug.apk" >> $GITHUB_OUTPUT
-          echo "Prepared release asset at $TMP_DIR/app-debug.apk"
+          echo "asset_path=$TARGET_PATH" >> $GITHUB_OUTPUT
+          echo "asset_name=$ASSET_NAME" >> $GITHUB_OUTPUT
+          echo "Prepared release asset: $TARGET_PATH"
 
       - name: Publish APK to GitHub Releases
         id: release
@@ -114,23 +118,24 @@ jobs:
           gh --version
           ASSET_PATH="${{ steps.prepare_asset.outputs.asset_path }}"
           if [ ! -f "$ASSET_PATH" ] || [ ! -s "$ASSET_PATH" ]; then
-            echo "Error: Asset file missing or empty before release publication."
+            echo "Error: Release asset missing or empty before release publication."
             exit 1
           fi
 
-          TAG_NAME="debug-apk-build-${{ github.run_number }}-${{ github.run_attempt }}"
-          RELEASE_TITLE="Debug APK Build #${{ github.run_number }}"
+          TAG_NAME="debug-apk-build-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
+          RELEASE_TITLE="Debug APK Build #${GITHUB_RUN_NUMBER}"
 
-          echo "Creating GitHub Release with tag: $TAG_NAME"
+          echo "Publishing release with tag: $TAG_NAME"
           gh release create "$TAG_NAME" "$ASSET_PATH" \
             --title "$RELEASE_TITLE" \
-            --target "${{ github.sha }}" \
+            --target "$GITHUB_SHA" \
             --latest \
-            --notes "### Automatic Debug APK Build
-  - **Run Number**: #${{ github.run_number }}
-  - **Run Attempt**: ${{ github.run_attempt }}
-  - **Commit SHA**: \`${{ github.sha }}\`
-  - **Note**: This is an automatically generated debug APK for testing purposes only. Signed with a temporary debug keystore."
+            --notes "### Automatically Generated Debug APK
+  - **Runner**: GitHub Actions
+  - **Run Number**: #${GITHUB_RUN_NUMBER}
+  - **Run Attempt**: ${GITHUB_RUN_ATTEMPT}
+  - **Source Commit**: \`${GITHUB_SHA}\`
+  - **Notice**: This APK is intended for testing and development only. It is signed with a temporary debug keystore and is not a Play Store production release."
 
       - name: Report APK download result
         if: always()
@@ -138,14 +143,28 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if [ "${{ steps.release.outcome }}" = "success" ]; then
-            echo "GitHub Release published successfully!"
-            TAG_NAME="debug-apk-build-${{ github.run_number }}-${{ github.run_attempt }}"
+            TAG_NAME="debug-apk-build-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
+            RELEASE_TITLE="Debug APK Build #${GITHUB_RUN_NUMBER}"
+            RELEASE_URL="https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG_NAME}"
+            ASSET_NAME="${{ steps.prepare_asset.outputs.asset_name }}"
+
+            echo "=== Release Publication Succeeded ==="
+            echo "Release Tag: $TAG_NAME"
+            echo "Release Title: $RELEASE_TITLE"
+            echo "Release URL: $RELEASE_URL"
+            echo "Asset Filename: $ASSET_NAME"
             gh release view "$TAG_NAME" || true
-            DIRECT_URL="https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/app-debug.apk"
-            echo "## DIRECT APK DOWNLOAD" >> $GITHUB_STEP_SUMMARY
-            echo "[$DIRECT_URL]($DIRECT_URL)" >> $GITHUB_STEP_SUMMARY
-            echo "Backup Actions artifact \`app-debug-apk\` remains available." >> $GITHUB_STEP_SUMMARY
+
+            echo "## GitHub Release Published" >> $GITHUB_STEP_SUMMARY
+            echo "**Release URL**: [$RELEASE_URL]($RELEASE_URL)" >> $GITHUB_STEP_SUMMARY
+            echo "**APK Asset**: \`$ASSET_NAME\`" >> $GITHUB_STEP_SUMMARY
+            echo "The APK is available to download directly from the release Assets section." >> $GITHUB_STEP_SUMMARY
+            echo "The normal Actions artifact \`app-debug-apk\` is also available as a backup." >> $GITHUB_STEP_SUMMARY
           else
-            echo "::warning ::GitHub Release publication step failed or was skipped."
-            echo "If the APK build succeeded, the backup Actions artifact 'app-debug-apk' remains available on this workflow run."
+            echo "::warning ::Release publishing failed or was skipped."
+            echo "If the build succeeded, the APK artifact named 'app-debug-apk' remains safely available in GitHub Actions artifacts."
+
+            echo "## Release Warning" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ GitHub Release publishing encountered an issue or was skipped." >> $GITHUB_STEP_SUMMARY
+            echo "The debug APK build succeeded and the backup Actions artifact \`app-debug-apk\` remains fully available on this workflow run." >> $GITHUB_STEP_SUMMARY
           fi

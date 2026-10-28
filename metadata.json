@@ -1,0 +1,6 @@
+{
+  "name": "ArtFlow - Digital Drawing & Painting Studio",
+  "description": "Mobile-first digital art and drawing studio featuring vector-editable strokes, bucket fill, lasso, transform with movable pivot point, layers, color find & replace, AI reference generator, and art mentor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

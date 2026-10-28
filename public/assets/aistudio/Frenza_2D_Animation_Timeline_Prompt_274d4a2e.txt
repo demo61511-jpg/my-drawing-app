@@ -1,0 +1,704 @@
+# NEW FEATURE — PROFESSIONAL 2D ANIMATION TIMELINE — DRAWING APP
+
+I already have an existing professional mobile drawing application.
+
+The existing Drawing Canvas, Layers, Brush, Eraser, Fill, Curve, Lasso, Shape, Transform, Pivot Point, Canvas Viewport/Camera and other systems are already working.
+
+I now want to ADD a 2D Animation Timeline System.
+
+The animation system should be inspired by the layer/keyframe workflow of apps such as Alight Motion, while keeping the drawing experience similar to a professional drawing application.
+
+This is NOT a full professional video editor.
+
+This is a 2D drawing + layer animation system.
+
+IMPORTANT — DO NOT BREAK EXISTING FEATURES
+
+Do NOT redesign or replace the existing application.
+
+Do NOT replace or modify the existing canvas, layer system, Transform system, Transform Bottom Sheet, Canvas Fit/Camera system, Brush, Pencil, Eraser, Fill, Curve, Lasso, Shape, Pivot Point, Reference Image, or existing drawing behavior.
+
+Do NOT remove existing tools.
+
+Do NOT create a separate drawing document for animation.
+
+The animation timeline must use the SAME existing document, SAME layers, SAME objects/strokes and SAME transform system.
+
+1. ANIMATION ICON
+
+In the existing top toolbar, there is already an image/import icon.
+
+Add a new Animation icon immediately to the RIGHT of the existing image/import icon.
+
+When the user taps the Animation icon, enter Animation Mode and show the Animation Timeline at the bottom.
+
+Do not move unrelated toolbar items.
+
+2. ANIMATION MODE
+
+The application should have two connected modes:
+
+DRAWING MODE — normal drawing workspace.
+
+ANIMATION MODE — canvas plus animation timeline.
+
+These are NOT two separate projects.
+
+The same document, layers, groups, objects, strokes, images, transforms, colors, visibility and pivot points must be shared.
+
+3. OPENING ANIMATION MODE
+
+When Animation Mode opens, show a timeline interface similar in concept to the provided reference screenshot.
+
+The timeline appears at the bottom while the canvas remains visible above it.
+
+Do NOT create a separate animation canvas.
+
+Do NOT flatten artwork.
+
+4. ALL DRAWING LAYERS AUTOMATICALLY APPEAR IN TIMELINE
+
+If the Canvas contains Layer 5, Layer 4, Layer 3, Layer 2, Layer 1 and Background, Animation Mode must automatically show exactly those layers in the timeline.
+
+The user must NOT manually import layers into the timeline.
+
+The timeline is another view of the existing layer system.
+
+5. TWO-WAY SYNCHRONIZATION
+
+Canvas Layers and Timeline Layers must stay synchronized.
+
+If a layer is added on Canvas, it appears in Timeline.
+
+If a layer is deleted from Timeline, it is deleted from Canvas.
+
+If a layer is renamed, the name updates everywhere.
+
+If a layer is hidden, it is hidden everywhere.
+
+If a layer is reordered, the order updates everywhere.
+
+There must be ONE source of truth for layers.
+
+Do not maintain two separate layer databases.
+
+6. TIMELINE LAYER ROW
+
+Each layer should have:
+- Visibility
+- Layer name
+- Layer thumbnail where available
+- Parent indicator
+- Group indicator
+- Keyframes
+- Timeline span
+
+The timeline must be horizontally scrollable.
+
+7. TIMELINE HEADER
+
+Provide:
+- Play
+- Pause
+- Stop/reset
+- Previous frame
+- Next frame
+- Current frame/time
+- Timeline ruler
+- Playhead
+
+Keep it simple. This is not a professional video editor.
+
+8. PLAYHEAD
+
+Add a vertical playhead representing the current animation frame.
+
+When the playhead moves, the canvas updates to the correct animated state.
+
+Scrubbing the timeline must immediately update the canvas.
+
+9. KEYFRAME SYSTEM
+
+Support keyframes for:
+- Position X/Y
+- Scale X/Y
+- Rotation
+- Opacity
+- Visibility
+
+Keyframes belong to the existing layer/object IDs.
+
+10. ADD KEYFRAME
+
+When the user selects a layer and taps Add Keyframe, create a keyframe at the CURRENT PLAYHEAD FRAME.
+
+Store the current property state at that frame.
+
+11. KEYFRAME INTERPOLATION
+
+Interpolate Position, Scale, Rotation and Opacity between keyframes.
+
+At intermediate frames the layer should smoothly transition between stored values.
+
+Do not create a large professional graph editor.
+
+12. DIRECT CANVAS ANIMATION WORKFLOW
+
+The user must be able to:
+1. Select a layer.
+2. Set playhead to frame 0.
+3. Add keyframe.
+4. Move playhead to frame 20.
+5. Transform the object on the canvas.
+6. Add/update keyframe.
+7. Play animation.
+
+Canvas and Timeline must stay synchronized.
+
+13. EXISTING TRANSFORM SYSTEM
+
+Reuse the existing Transform system.
+
+It already supports Translate, Scale, Rotation, Pivot Point and Transform Bottom Sheet.
+
+Do NOT create a second Transform implementation.
+
+When an animated layer is selected, the existing Transform system modifies the animated properties at the current frame.
+
+14. PIVOT POINT + ANIMATION
+
+Keep the existing Pivot Point system.
+
+Rotation keyframes must use the existing pivot.
+
+If the user changes the pivot, future transforms respect the new pivot.
+
+Do not create a separate animation pivot system.
+
+15. DRAWING FROM ANIMATED LAYERS
+
+When a timeline layer is selected, keep an existing Drawing/Edit icon in the top toolbar.
+
+When the user taps the Drawing/Edit icon, they can edit that layer using the existing drawing tools:
+- Draw
+- Erase
+- Change color
+- Edit strokes
+- Use existing tools
+
+Do NOT create a separate drawing editor.
+
+After editing, return to Animation Mode without losing the timeline.
+
+16. TOP DRAWING ICON
+
+During Animation Mode, keep the existing drawing/edit icon available.
+
+Concept:
+Back | Undo | Redo | Image | Animation | Drawing/Edit
+
+When a timeline layer is selected and Drawing/Edit is tapped, that layer becomes the active editable drawing layer.
+
+17. LAYER GROUPING
+
+Support layer groups.
+
+Example:
+Character
+  Head
+  Body
+  Left Arm
+  Right Arm
+  Left Leg
+  Right Leg
+
+Groups can be:
+- Expanded/collapsed
+- Renamed
+- Hidden
+- Duplicated
+- Deleted
+
+Do not flatten grouped layers.
+
+18. PARENTING
+
+Add simple layer parenting inspired by Alight Motion.
+
+Example:
+Character
+  Body
+  Head
+    Eye Left
+    Eye Right
+  Left Arm
+  Right Arm
+
+When the parent moves, children follow.
+When the parent rotates, children follow.
+When the parent scales, children follow.
+
+Children preserve their local transform relative to the parent.
+
+Do not permanently merge layers.
+
+19. PARENTING UI
+
+Allow:
+1. Select a layer.
+2. Tap Parent.
+3. Choose another layer/group.
+4. Selected layer becomes a child.
+
+Show parent/child relationships clearly.
+
+20. PARENTING + KEYFRAMES
+
+Child layers can still have their own keyframes.
+
+Use:
+Parent Transform + Child Local Transform + Child Animation
+
+Do not flatten transformations.
+
+21. LAYER VISIBILITY
+
+Every timeline layer has an eye icon.
+
+Tap eye to hide/show.
+
+This must synchronize with the existing layer visibility system.
+
+22. ADD LAYER
+
+Provide Add Layer in the Timeline.
+
+Use the existing layer creation system.
+
+The new layer immediately appears in Canvas and Timeline.
+
+23. DELETE LAYER
+
+Provide Delete Layer.
+
+Deleting a layer deletes the same document layer and its animation data.
+
+Do not leave orphaned keyframes.
+
+24. BACKGROUND
+
+Support a Background layer.
+
+Background can be:
+- Transparent
+- Solid color
+- Existing background artwork
+
+It appears in the timeline.
+
+Use the existing color system.
+
+25. GROUP VISUALIZATION
+
+Groups should visually differ from normal layers and can be collapsed to save screen space.
+
+26. TIMELINE SCROLLING
+
+Support:
+- Vertical scrolling for many layers.
+- Horizontal scrolling for many frames.
+
+Do not make the entire app scroll.
+
+Only appropriate timeline areas should scroll.
+
+27. TIMELINE HEIGHT
+
+Use a sensible mobile timeline height.
+
+Canvas remains visible.
+
+If possible, allow the timeline height to be adjusted by dragging its top edge.
+
+Do not destroy or recreate the canvas when timeline height changes.
+
+28. CANVAS + TIMELINE RELATIONSHIP
+
+Use one document:
+
+PROJECT
+  DOCUMENT
+    CANVAS
+    LAYERS
+      GROUP
+        LAYER
+        LAYER
+      LAYER
+      BACKGROUND
+    OBJECTS / STROKES
+  ANIMATION DATA
+    TIMELINE
+    TRACKS
+    KEYFRAMES
+
+Animation data references existing layer/object IDs.
+
+Do not duplicate artwork.
+
+29. STABLE IDs
+
+Every layer must have a stable unique ID.
+
+Keyframes reference layer IDs.
+
+Do not identify layers only by array index.
+
+30. DRAWING EDIT AT CURRENT FRAME
+
+When entering Drawing/Edit mode from Timeline:
+- Remember current frame.
+- Keep selected layer.
+- Allow normal drawing/editing.
+- Return to Animation Mode at the same frame.
+- Preserve playhead, selected layer, groups, parents and keyframes.
+
+31. PLAYBACK
+
+Provide:
+- Play
+- Pause
+- Stop/reset
+- Previous frame
+- Next frame
+- Scrubbing
+
+During playback, render animated layer states on the existing canvas.
+
+Use requestAnimationFrame or an appropriate timing mechanism.
+
+Do not rebuild the entire document unnecessarily every frame.
+
+32. FPS
+
+Provide a simple FPS setting:
+- 12 FPS
+- 24 FPS
+- 30 FPS
+- 60 FPS
+
+This is for animation timing only.
+
+33. ANIMATION DURATION
+
+Allow a simple project duration such as 00:00 — 00:05 or Frame 0 — Frame 120.
+
+Timeline stops at project duration.
+
+34. NO PROFESSIONAL VIDEO EDITING FEATURES
+
+DO NOT add:
+- Video effects
+- Transitions
+- Filters
+- Color grading
+- Audio editing
+- Audio tracks
+- Professional video cuts
+- Video clips
+- Advanced effects
+- Complex compositing editor
+- Motion blur editor
+- Advanced graph editor
+- Professional NLE features
+
+This is a 2D Drawing Animation Timeline, NOT a video editor.
+
+35. TIMELINE CORE FUNCTIONS
+
+The timeline should mainly handle:
+- Layer ordering
+- Layer grouping
+- Layer parenting
+- Layer visibility
+- Add layer
+- Delete layer
+- Rename layer
+- Background
+- Playhead
+- Timeline scrolling
+- Keyframes
+- Position animation
+- Scale animation
+- Rotation animation
+- Opacity animation
+- Simple playback
+- FPS
+- Animation duration
+
+36. DRAWING TOOLS REMAIN THE MAIN EDITOR
+
+Drawing Canvas:
+- Brush
+- Pencil
+- Eraser
+- Fill
+- Curve
+- Shape
+- Lasso
+- Transform
+- Layers
+- Colors
+
+Timeline:
+- Layers
+- Groups
+- Parenting
+- Visibility
+- Keyframes
+- Transform animation
+- Playback
+- Timeline navigation
+
+37. EXAMPLE WORKFLOW
+
+User creates:
+Head
+Body
+Left Arm
+Right Arm
+Left Leg
+Right Leg
+Background
+
+Taps Animation.
+
+All layers appear automatically.
+
+Groups:
+Character
+  Head
+  Body
+  Left Arm
+  Right Arm
+  Left Leg
+  Right Leg
+
+Parent:
+Head -> Character
+Left Arm -> Character
+Right Arm -> Character
+
+At frame 0, add keyframe.
+
+Move to frame 30.
+
+Move Character with existing Transform.
+
+Add keyframe.
+
+Play.
+
+Character moves smoothly from frame 0 to frame 30.
+
+38. DRAWING EDIT WORKFLOW
+
+Timeline:
+Character
+  Body
+  Left Hand
+  Right Hand
+
+User selects Right Hand.
+
+Taps Drawing/Edit icon.
+
+Normal drawing canvas editing becomes available.
+
+User modifies the hand.
+
+Return to Animation Mode.
+
+The modified hand remains part of the same layer and timeline track.
+
+39. PERFORMANCE
+
+This is a mobile Android drawing application.
+
+Optimize for mid-range Android devices.
+
+Use where appropriate:
+- requestAnimationFrame
+- Efficient layer rendering
+- Cached static layers
+- Dirty rendering
+- Efficient keyframe lookup
+- Stable object IDs
+- Interpolation caching
+
+Do not put the entire animation state into expensive React re-renders on every frame.
+
+40. SAVE / LOAD
+
+Save animation data with the project.
+
+When reopened, restore:
+- Layers
+- Groups
+- Parent relationships
+- Visibility
+- Background
+- Timeline duration
+- FPS
+- Current animation data
+- Keyframes
+- Position animation
+- Scale animation
+- Rotation animation
+- Opacity animation
+
+Nothing should disappear.
+
+41. PROJECT DATA STRUCTURE
+
+Extend the existing project/document format instead of replacing it.
+
+Conceptually:
+
+Project
+  Document
+    width
+    height
+    layers
+
+  Animation
+    fps
+    duration
+    currentFrame
+    tracks
+      layerId
+      property
+      keyframes
+
+Keyframes contain frame + value, or an appropriate structured property value.
+
+42. DO NOT FLATTEN
+
+Never flatten animated layers into one bitmap.
+
+Never convert the drawing into a video just to create animation.
+
+Artwork remains editable.
+
+Layer = editable drawing
+Animation Track = controls that layer's properties
+
+43. ANIMATION MODE STATE
+
+When Animation Mode is active, visually indicate that Animation Mode is active.
+
+The user should understand whether they are Drawing or Animating.
+
+Do not permanently hide the existing drawing tools.
+
+44. TARGET UI
+
+Conceptually:
+
+TOP TOOLBAR
+Back | Undo | Redo | Image | Animation | Drawing/Edit
+
+CANVAS
+Existing artwork
+
+TIMELINE
+Play/Pause
+Current frame/time
+Playhead
+Layer rows
+Keyframes
+Groups
+Parent relationships
+Visibility
+
+Use the provided screenshot as a functional reference, not as a requirement to copy its exact appearance.
+
+45. IMPLEMENTATION PHASES
+
+Implement incrementally:
+
+Phase 1:
+Animation icon + Animation Mode + Timeline panel.
+
+Phase 2:
+Synchronize existing Canvas Layers with Timeline Layers.
+
+Phase 3:
+Timeline scrolling + playhead + playback.
+
+Phase 4:
+Keyframe system.
+
+Phase 5:
+Position / Scale / Rotation / Opacity animation.
+
+Phase 6:
+Layer grouping.
+
+Phase 7:
+Parent-child relationships.
+
+Phase 8:
+Background layer.
+
+Phase 9:
+Drawing/Edit mode from selected timeline layer.
+
+Phase 10:
+Save/load/autosave.
+
+Phase 11:
+Performance optimization.
+
+After EACH phase:
+1. Compile.
+2. Fix TypeScript errors.
+3. Fix runtime errors.
+4. Test the feature.
+5. Confirm existing features still work.
+6. Only then continue.
+
+46. FINAL REQUIREMENT
+
+The result should feel like a professional mobile drawing application with a lightweight 2D animation timeline.
+
+NOT a professional video editing application.
+
+The user should be able to:
+
+DRAW → ORGANIZE LAYERS → GROUP → PARENT → ADD KEYFRAMES → TRANSFORM → PLAY ANIMATION → EDIT DRAWING → CONTINUE ANIMATING.
+
+The Drawing Canvas remains the main creative workspace.
+
+The Timeline is an additional animation workspace.
+
+Both share the same underlying document and layer/object system.
+
+MOST IMPORTANT RULES:
+
+1. Existing drawing features remain unchanged.
+2. Existing Transform remains unchanged.
+3. Existing Pivot Point remains unchanged.
+4. Existing Canvas Camera/Fit remains unchanged.
+5. Timeline uses existing layers.
+6. Every existing canvas layer automatically appears in Timeline.
+7. Timeline changes synchronize with Canvas layers.
+8. Grouping and parenting are non-destructive.
+9. Keyframes animate existing layer transforms/properties.
+10. Drawing edits remain editable.
+11. Animation data saves/loads with the project.
+12. Do not add professional video-editor effects/features.
+13. Optimize for Android/mobile.
+14. Do not create duplicate Canvas, Layer or Transform systems.
+15. Do not flatten artwork.
+
+Build this as a true 2D layer-animation system integrated into the existing drawing application, not as a separate video editor.
